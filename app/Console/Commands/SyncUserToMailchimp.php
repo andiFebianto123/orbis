@@ -84,7 +84,7 @@ class SyncUserToMailchimp extends Command
                 $leftJoinSub->on('personels.id', 'status_histories.personel_id');
             })
             ->join('title_lists as title', 'title.id', 'personels.title_id')
-            ->select('first_name', 'last_name', 'email', 'short_desc', 'date_of_birth', 'language', DB::raw('IFNULL(status_histories.status, "-") as acc_status'))
+            ->select('first_name', 'last_name', 'email', 'short_desc', 'date_of_birth', 'language', 'acc_status')
             ->cursor()->chunk(200);
 
             $emails = [];

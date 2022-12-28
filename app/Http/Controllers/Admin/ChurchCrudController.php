@@ -560,6 +560,7 @@ class ChurchCrudController extends CrudController
                     ->withInput()->withErrors($errors);
             }
 
+            /*
             if(ChurchesRcdpw::where('churches_id', $id)->exists()){
                 // hapus semua data churches rcd
                 ChurchesRcdpw::where('churches_id', $id)->delete();
@@ -569,6 +570,7 @@ class ChurchCrudController extends CrudController
             $rc->churches_id = $id;
             $rc->rc_dpwlists_id = $id_rcdpw;
             $rc->save();
+            */
 
             DB::commit();
             // hit api for update church
@@ -682,6 +684,8 @@ class ChurchCrudController extends CrudController
 
             $id = $item->id;
 
+            /*
+
             if(ChurchesRcdpw::where('churches_id', $id)->exists()){
                 // hapus semua data churches rcd
                 ChurchesRcdpw::where('churches_id', $id)->delete();
@@ -691,6 +695,7 @@ class ChurchCrudController extends CrudController
             $rc->churches_id = $id;
             $rc->rc_dpwlists_id = $id_rcdpw;
             $rc->save();
+            */
     
             DB::commit();
             // hit api for update church
@@ -749,9 +754,9 @@ class ChurchCrudController extends CrudController
             if(CoordinatorChurch::where('churches_id', $id)->exists()){
                 CoordinatorChurch::where('churches_id', $id)->delete();
             }
-            if(ChurchesRcdpw::where('churches_id', $id)->exists()){
-                ChurchesRcdpw::where('churches_id', $id)->delete();
-            }
+            // if(ChurchesRcdpw::where('churches_id', $id)->exists()){
+            //     ChurchesRcdpw::where('churches_id', $id)->delete();
+            // }
             $response = $this->crud->delete($id);
             DB::commit();
             // hit api for update church

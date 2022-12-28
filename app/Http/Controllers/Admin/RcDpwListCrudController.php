@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\HeadingRowImport;
 use App\Helpers\HitCompare;
 use App\Helpers\HitApi;
+use App\Models\Church;
+use App\Models\Personel;
 use App\Models\RcDpwList;
 use Excel;
 use Exception;
@@ -237,17 +239,37 @@ class RcDpwListCrudController extends CrudController
     {
         $this->crud->hasAccessOrFail('delete');
 
-        // get entry ID from Request (makes sure its the last ID for nested resources)
         $id = $this->crud->getCurrentEntryId() ?? $id;
+        DB::beginTransaction();
+        try {
 
-        $delete = $this->crud->delete($id);
+            $personel = Personel::where('rc_dpw_id', $id)->first();
+            if(isset($personel)){
+                $personel->rc_dpw_id = null;
+                $personel->save();
+            }
+    
+            $church = Church::where('rc_dpw_id', $id)->first();
+            if(isset($church)){
+                DB::rollBack();
 
-        $send = new HitApi;
-        $ids = [$id];
-        $module = 'region';
-        $response = $send->action($ids, 'delete', $module)->json();
+                return false;
+            }
+    
+            $delete = $this->crud->delete($id);
+    
+            $send = new HitApi;
+            $ids = [$id];
+            $module = 'region';
+            $send->action($ids, 'delete', $module)->json();
+            
+            DB::commit();
 
-        return $delete;
+            return $delete;
+        } catch (\Throwable $th) {
+            return false;
+        }
+       
     }
 
     public function ajaxRcdpw()
